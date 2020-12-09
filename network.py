@@ -16,6 +16,7 @@ with open('env.yaml') as f:
 g_domain = global_conf['domain']
 g_org = global_conf['org']
 g_peer = global_conf['peer']
+g_channel = global_conf['channel']
 
 mode = sys.argv[1]
 
@@ -32,6 +33,8 @@ def install():
 def deploy():
     arcfile = f'/tmp/{g_peer}-{g_org}.{g_domain}.tar.gz'
     docker_compose_file = f'/tmp/docker-compose-{g_peer}-{g_org}.{g_domain}.yaml'
+    configtx_conf_file = '/tmp/configtx.yaml'
+
     # extract the fabric configuration files
     if not os.path.exists(arcfile):
         print(f'{arcfile} is not found...')
@@ -44,6 +47,12 @@ def deploy():
         print(f'{docker_compose_file} is not found...')
         return
     shutil.copyfile(docker_compose_file, f'docker/docker-compose.yaml')
+
+    # copy the configtx configuration file
+    if not os.path.exists(configtx_conf_file):
+        print(f'{configtx_conf_file} is not found...')
+        return
+    shutil.copyfile(configtx_conf_file, 'conf/configtx.yaml')
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import sys
+import tarfile
 
 ENV_PATH = os.getenv('PATH')
 os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
@@ -18,5 +19,15 @@ def install():
     # install docker images
     subprocess.call('script/install-fabric.sh docker', shell=True)
 
+def deploy(arcfile):
+    if not os.path.exists(arcfile):
+        print(f'{arcfile} is not found...')
+        return
+    with tarfile.open(arcfile, 'r') as tar:
+        tar.extractall()
+
 if mode == 'install':
     install()
+elif mode == 'deploy':
+    deploy(sys.argv[2])
+

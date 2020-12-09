@@ -1,5 +1,6 @@
 import os
 import subprocess
+import shutil
 import sys
 import tarfile
 
@@ -19,15 +20,22 @@ def install():
     # install docker images
     subprocess.call('script/install-fabric.sh docker', shell=True)
 
-def deploy(arcfile):
+def deploy(arcfile, docker_compose_file):
+    # extract the fabric configuration files
     if not os.path.exists(arcfile):
         print(f'{arcfile} is not found...')
         return
     with tarfile.open(arcfile, 'r') as tar:
         tar.extractall()
 
+    # copy the docker-compose configuration file
+    if not os.path.exists(docker_compose_file):
+        print(f'{docker_compose_file} is not found...')
+        return
+    shutil.copyfile(docker_compose_file, f'docker/{os.path.basename(docker_compose_file)}')
+
 if mode == 'install':
     install()
 elif mode == 'deploy':
-    deploy(sys.argv[2])
+    deploy(sys.argv[2], sys.argv[3])
 

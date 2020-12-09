@@ -1,6 +1,7 @@
 bin/*
 cache/*
 chaincodes/*
+channel-artifacts/*
 conf/*
 config/*
 docker/*

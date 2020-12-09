@@ -3,4 +3,6 @@ config/*
 docker/*
 organizations/*
 
+env.yaml
+
 !.gitkeep

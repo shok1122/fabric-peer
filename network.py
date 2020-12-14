@@ -31,8 +31,8 @@ def install():
     subprocess.call('script/install-fabric.sh docker', shell=True)
 
 def deploy():
-    arcfile = f'/tmp/{g_peer}-{g_org}.{g_domain}.tar.gz'
-    docker_compose_file = f'/tmp/docker-compose-{g_peer}-{g_org}.{g_domain}.yaml'
+    arcfile = f'/tmp/organizations.tar.gz'
+    docker_compose_file = f'/tmp/docker-compose.yaml'
     configtx_conf_file = '/tmp/configtx.yaml'
 
     # extract the fabric configuration files

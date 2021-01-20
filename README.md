@@ -21,7 +21,7 @@ The following command installs the Hyperledger Fabric binaries and the Hyperledg
 python network.py install
 ```
 
-## Deploy key material
+## Deploy a Key Material
 
 You can get key material from orderer.
 The key material is packed into tar.gz files, which are sent to `/tmp` directoy.
@@ -31,7 +31,7 @@ The following command extracts the tar.gz files and deploy the keymaterial to sp
 python network.py deploy
 ```
 
-## Run peer
+## Run a Peer Container
 
 You can run a peer by the up option.
 The peer works with Docker.

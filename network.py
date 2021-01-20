@@ -34,6 +34,7 @@ def deploy():
     arcfile = f'/tmp/organizations.tar.gz'
     docker_compose_file = f'/tmp/docker-compose.yaml'
     configtx_conf_file = '/tmp/configtx.yaml'
+    core_conf_file = '/tmp/core.yaml'
 
     # extract the fabric configuration files
     if not os.path.exists(arcfile):
@@ -53,6 +54,12 @@ def deploy():
         print(f'{configtx_conf_file} is not found...')
         return
     shutil.copyfile(configtx_conf_file, 'conf/configtx.yaml')
+
+    # copy the configtx configuration file
+    if not os.path.exists(core_conf_file):
+        print(f'{core_conf_file} is not found...')
+        return
+    shutil.copyfile(core_conf_file, 'conf/core.yaml')
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)

@@ -4,7 +4,7 @@ chaincodes/*
 channel-artifacts/*
 conf/*
 config/*
-docker/*
+docker/docker-compose.yaml
 organizations/*
 
 env.yaml

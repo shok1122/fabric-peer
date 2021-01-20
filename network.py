@@ -9,18 +9,18 @@ ENV_PATH = os.getenv('PATH')
 os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
 os.environ['FABRIC_CFG_PATH'] = './conf'
 
-global_conf = None
+g_conf = None
 with open('env.yaml') as f:
-    global_conf = yaml.safe_load(f)
+    g_conf = yaml.safe_load(f)
 
-g_domain = global_conf['domain']
-g_org = global_conf['org']
-g_peer = global_conf['peer']
-g_channel = global_conf['channel']
+g_domain = g_conf['domain']
+g_org = g_conf['org']
+g_peer = g_conf['peer']
+g_channel = g_conf['channel']
 
 mode = sys.argv[1]
 
-def install():
+def setup():
     # install binaries
     files = os.listdir('bin')
     files = [ f for f in files if not f.startswith('.') ]
@@ -57,8 +57,8 @@ def deploy():
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)
 
-if mode == 'install':
-    install()
+if mode == 'setup':
+    setup()
 elif mode == 'deploy':
     deploy()
 elif mode == 'up':

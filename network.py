@@ -25,10 +25,10 @@ def setup():
     files = os.listdir('bin')
     files = [ f for f in files if not f.startswith('.') ]
     if not files:
-        subprocess.call('script/install-fabric.sh binary', shell=True)
+        subprocess.call('script/setup.sh binary', shell=True)
 
     # install docker images
-    subprocess.call('script/install-fabric.sh docker', shell=True)
+    subprocess.call('script/setup.sh docker', shell=True)
 
 def deploy():
     arcfile = f'/tmp/organizations.tar.gz'

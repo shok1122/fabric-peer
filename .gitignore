@@ -9,4 +9,6 @@ organizations/*
 
 env.yaml
 
+vendor
+
 !.gitkeep

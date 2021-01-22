@@ -10,12 +10,12 @@ os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
 os.environ['FABRIC_CFG_PATH'] = './conf'
 
 g_conf_peer = None
-with open('cache/config-peer.yaml') as f:
-    g_conf_peer = yaml.safe_load(f)
+g_domain = None
+g_org = None
+g_peer = None
 
-g_domain = g_conf_peer['domain']
-g_org = g_conf_peer['org']
-g_peer = g_conf_peer['peer']
+if os.path.isfile('cache/config-peer.yaml'):
+    load_config_peer()
 
 mode = sys.argv[1]
 
@@ -28,6 +28,20 @@ def setup():
 
     # install docker images
     subprocess.call('script/setup.sh docker', shell=True)
+
+def load_config_peer():
+    global g_conf_peer
+    global g_domain
+    global g_org
+    global g_peer
+
+    g_conf_peer = None
+    with open('cache/config-peer.yaml') as f:
+        g_conf_peer = yaml.safe_load(f)
+
+    g_domain = g_conf_peer['domain']
+    g_org = g_conf_peer['org']
+    g_peer = g_conf_peer['peer']
 
 def deploy():
     arcfile = f'/tmp/organizations.tar.gz'
@@ -73,6 +87,8 @@ def deploy():
         print(f'{config_peer_file} is not found...')
         return
     shutil.copyfile(config_peer_file, 'cache/config-peer.yaml')
+
+    load_config_peer()
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)

@@ -9,13 +9,13 @@ ENV_PATH = os.getenv('PATH')
 os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
 os.environ['FABRIC_CFG_PATH'] = './conf'
 
-g_conf_local = None
-with open('cache/config-local.yaml') as f:
-    g_conf_local = yaml.safe_load(f)
+g_conf_peer = None
+with open('cache/config-peer.yaml') as f:
+    g_conf_peer = yaml.safe_load(f)
 
-g_domain = g_conf_local['domain']
-g_org = g_conf_local['org']
-g_peer = g_conf_local['peer']
+g_domain = g_conf_peer['domain']
+g_org = g_conf_peer['org']
+g_peer = g_conf_peer['peer']
 
 mode = sys.argv[1]
 
@@ -35,6 +35,7 @@ def deploy():
     configtx_conf_file = '/tmp/configtx.yaml'
     core_conf_file = '/tmp/core.yaml'
     config_net_file = '/tmp/config-network.yaml'
+    config_peer_file = '/tmp/config-peer.yaml'
 
     # extract the fabric configuration files
     if not os.path.exists(arcfile):
@@ -66,6 +67,12 @@ def deploy():
         print(f'{config_net_file} is not found...')
         return
     shutil.copyfile(config_net_file, 'cache/config-network.yaml')
+
+    # copy the peer configuration file
+    if not os.path.exists(config_peer_file):
+        print(f'{config_peer_file} is not found...')
+        return
+    shutil.copyfile(config_peer_file, 'cache/config-peer.yaml')
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)

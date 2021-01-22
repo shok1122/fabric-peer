@@ -13,15 +13,9 @@ g_conf_local = None
 with open('cache/config-local.yaml') as f:
     g_conf_local = yaml.safe_load(f)
 
-g_conf_net = None
-with open('cache/config-network.yaml') as f:
-    g_conf_local = yaml.safe_load(f)
-
 g_domain = g_conf_local['domain']
 g_org = g_conf_local['org']
 g_peer = g_conf_local['peer']
-
-g_channel = g_conf_net['channel']
 
 mode = sys.argv[1]
 

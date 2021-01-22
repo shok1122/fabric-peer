@@ -53,13 +53,13 @@ def packaging(package_name, cc_path):
             --label {package_name}"
     call(command)
 
-def install(chaincode_name, version, package_id):
+def install(package_path, chaincode_name, version, package_id):
     print('------------------------------------')
     print(' install chaincode')
     print('------------------------------------')
     command = f" \
         peer lifecycle chaincode install \
-            cache/{package_name}.tar.gz"
+            cache/{package_path}"
     call(command)
 
     print('------------------------------------')
@@ -135,9 +135,10 @@ if mode == 'packaging':
     cc_path = sys.argv[3]
     packaging(package_name, cc_path)
 elif mode == 'install':
-    chaincode_name = sys.argv[2]
-    version = sys.argv[3]
-    package_id = sys.argv[4]
+    package_path = sys.argv[2]
+    chaincode_name = sys.argv[3]
+    version = sys.argv[4]
+    package_id = sys.argv[5]
     install(chaincode_name, version, package_id)
 elif mode == 'check-commit-readiness':
     chaincode_name = sys.argv[2]

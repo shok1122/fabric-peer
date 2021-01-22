@@ -8,6 +8,7 @@ with open('env.yaml') as f:
     g_conf = yaml.safe_load(f)
 
 g_orderer_domain = g_conf['orderer']['domain']
+g_channel = g_conf['channel']
 
 g_pwd = os.getcwd()
 g_path_orderer_ca = f'{g_pwd}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
@@ -56,7 +57,7 @@ def install(package_name, cc_path):
             --output json"
     subprocess.call(command, shell=True)
 
-def instantiate(channel_name, version, package_id):
+def instantiate(chaincode_name, package_id, version):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -66,13 +67,13 @@ def instantiate(channel_name, version, package_id):
             --tls \
             --cafile {g_path_orderer_ca} \
             --channelID {g_channel} \
-            --name {channel_name} \
+            --name {chaincode_name} \
             --version {version} \
             --init-required \
             --package-id {package_id}"
     subprocess.call(command, shell=True)
 
-def check_commit_readiness(channel_name, version):
+def check_commit_readiness(chaincode_name, version):
     print('------------------------------------')
     print(' check commit readiness')
     print('------------------------------------')
@@ -82,7 +83,7 @@ def check_commit_readiness(channel_name, version):
             --tls \
             --cafile {g_path_orderer_ca} \
             --channelID {g_channel} \
-            --name {channel_name} \
+            --name {chaincode_name} \
             --version {version} \
             --init-required"
     subprocess.call(command, shell=True)
@@ -94,12 +95,12 @@ if mode == 'install':
     cc_path = sys.argv[3]
     install(package_name, cc_path)
 elif mode == 'instantiate':
-    channel_name = sys.argv[2]
+    chaincode_name = sys.argv[2]
     version = sys.argv[3]
     package_id = sys.argv[4]
-    instantiate(channel_name, version, package_id)
+    instantiate(chaincode_name, version, package_id)
 elif mode == 'check-commit-readiness':
-    channel_name = sys.argv[2]
+    chaincode_name = sys.argv[2]
     version = sys.argv[3]
-    check_commit_readiness(channel_name, version)
+    check_commit_readiness(chaincode_name, version)
 

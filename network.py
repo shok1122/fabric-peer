@@ -9,14 +9,19 @@ ENV_PATH = os.getenv('PATH')
 os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
 os.environ['FABRIC_CFG_PATH'] = './conf'
 
-g_conf = None
-with open('env.yaml') as f:
-    g_conf = yaml.safe_load(f)
+g_conf_local = None
+with open('cache/config-local.yaml') as f:
+    g_conf_local = yaml.safe_load(f)
 
-g_domain = g_conf['domain']
-g_org = g_conf['org']
-g_peer = g_conf['peer']
-g_channel = g_conf['channel']
+g_conf_net = None
+with open('cache/config-network.yaml') as f:
+    g_conf_local = yaml.safe_load(f)
+
+g_domain = g_conf_local['domain']
+g_org = g_conf_local['org']
+g_peer = g_conf_local['peer']
+
+g_channel = g_conf_net['channel']
 
 mode = sys.argv[1]
 
@@ -35,6 +40,7 @@ def deploy():
     docker_compose_file = f'/tmp/docker-compose.yaml'
     configtx_conf_file = '/tmp/configtx.yaml'
     core_conf_file = '/tmp/core.yaml'
+    config_net_file = '/tmp/config-network.yaml'
 
     # extract the fabric configuration files
     if not os.path.exists(arcfile):
@@ -55,11 +61,17 @@ def deploy():
         return
     shutil.copyfile(configtx_conf_file, 'conf/configtx.yaml')
 
-    # copy the configtx configuration file
+    # copy the core configuration file
     if not os.path.exists(core_conf_file):
         print(f'{core_conf_file} is not found...')
         return
     shutil.copyfile(core_conf_file, 'conf/core.yaml')
+
+    # copy the network configuration file
+    if not os.path.exists(config_net_file):
+        print(f'{config_net_file} is not found...')
+        return
+    shutil.copyfile(config_net_file, 'cache/config-network.yaml')
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)

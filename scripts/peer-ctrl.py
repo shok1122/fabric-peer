@@ -18,6 +18,10 @@ FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
 
 g_path_orderer_ca = f'{FABRIC_CFG_PATH}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
 
+def call(command):
+    #print(command)
+    subprocess.call(command, shell=True)
+
 def install(package_name, cc_path):
 
     pwd = os.getcwd()
@@ -28,10 +32,10 @@ def install(package_name, cc_path):
     print('------------------------------------')
     command = f" \
             go mod init"
-    subprocess.call(command, shell=True)
+    call(command)
     command = f" \
             GO111MODULE=on go mod vendor"
-    subprocess.call(command, shell=True)
+    call(command)
 
     os.chdir(pwd)
 
@@ -44,7 +48,7 @@ def install(package_name, cc_path):
             --path {cc_path} \
             --lang golang \
             --label {package_name}"
-    subprocess.call(command, shell=True)
+    call(command)
 
     print('------------------------------------')
     print(' install chaincode')
@@ -52,7 +56,7 @@ def install(package_name, cc_path):
     command = f" \
         peer lifecycle chaincode install \
             cache/{package_name}.tar.gz"
-    subprocess.call(command, shell=True)
+    call(command)
 
     print('------------------------------------')
     print(' queryinstalled')
@@ -60,7 +64,7 @@ def install(package_name, cc_path):
     command = f" \
         peer lifecycle chaincode queryinstalled \
             --output json"
-    subprocess.call(command, shell=True)
+    call(command)
 
 def instantiate(chaincode_name, version, package_id):
     print('------------------------------------')
@@ -76,7 +80,7 @@ def instantiate(chaincode_name, version, package_id):
             --version {version} \
             --init-required \
             --package-id {package_id}"
-    subprocess.call(command, shell=True)
+    call(command)
 
 def check_commit_readiness(chaincode_name, version):
     print('------------------------------------')
@@ -91,7 +95,7 @@ def check_commit_readiness(chaincode_name, version):
             --name {chaincode_name} \
             --version {version} \
             --init-required"
-    subprocess.call(command, shell=True)
+    call(command)
 
 def commit(chaincode_name, version):
     print( '------------------------------------')
@@ -113,7 +117,7 @@ def commit(chaincode_name, version):
             --version {version} \
             --init-required \
             {peer_addr_list}"
-    subprocess.call(command, shell=True)
+    call(command)
 
 mode = sys.argv[1]
 

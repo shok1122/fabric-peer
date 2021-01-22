@@ -53,15 +53,23 @@ def packaging(package_name, cc_path):
             --label {package_name}"
     call(command)
 
-def install(package_path, chaincode_name, version, package_id):
+def install(package_path):
     print('------------------------------------')
     print(' install chaincode')
     print('------------------------------------')
     command = f" \
-        peer lifecycle chaincode install \
-            cache/{package_path}"
+        peer lifecycle chaincode install {package_path}"
     call(command)
 
+    print('------------------------------------')
+    print(' queryinstalled')
+    print('------------------------------------')
+    command = f" \
+        peer lifecycle chaincode queryinstalled \
+            --output json"
+    call(command)
+
+def approve(chaincode_name, version, package_id):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -75,15 +83,6 @@ def install(package_path, chaincode_name, version, package_id):
             --version {version} \
             --init-required \
             --package-id {package_id}"
-    call(command)
-
-def queryinstalled():
-    print('------------------------------------')
-    print(' queryinstalled')
-    print('------------------------------------')
-    command = f" \
-        peer lifecycle chaincode queryinstalled \
-            --output json"
     call(command)
 
 def check_commit_readiness(chaincode_name, version):
@@ -136,10 +135,12 @@ if mode == 'packaging':
     packaging(package_name, cc_path)
 elif mode == 'install':
     package_path = sys.argv[2]
-    chaincode_name = sys.argv[3]
-    version = sys.argv[4]
-    package_id = sys.argv[5]
-    install(chaincode_name, version, package_id)
+    install(package_path)
+elif mode == 'approve':
+    chaincode_name = sys.argv[2]
+    version = sys.argv[3]
+    package_id = sys.argv[4]
+    approve(chaincode_name, version, package_id)
 elif mode == 'check-commit-readiness':
     chaincode_name = sys.argv[2]
     version = sys.argv[3]

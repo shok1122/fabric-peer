@@ -10,8 +10,9 @@ with open('env.yaml') as f:
 g_orderer_domain = g_conf['orderer']['domain']
 g_channel = g_conf['channel']
 
-g_pwd = os.getcwd()
-g_path_orderer_ca = f'{g_pwd}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
+FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
+
+g_path_orderer_ca = f'{FABRIC_CFG_PATH}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
 
 def install(package_name, cc_path):
 

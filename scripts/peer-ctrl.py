@@ -77,7 +77,7 @@ def install(package_path, chaincode_name, version, package_id):
             --package-id {package_id}"
     call(command)
 
-def queryinstalled()
+def queryinstalled():
     print('------------------------------------')
     print(' queryinstalled')
     print('------------------------------------')

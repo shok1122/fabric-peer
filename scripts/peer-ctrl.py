@@ -3,12 +3,16 @@ import subprocess
 import sys
 import yaml
 
-g_conf = None
-with open('env.yaml') as f:
-    g_conf = yaml.safe_load(f)
+g_conf_local = None
+with open('cache/config-local.yaml') as f:
+    g_conf_local = yaml.safe_load(f)
 
-g_orderer_domain = g_conf['orderer']['domain']
-g_channel = g_conf['channel']
+g_conf_net = None
+with open('cache/config-network.yaml') as f:
+    g_conf_net = yaml.safe_load(f)
+
+g_orderer_domain = g_conf_net['orderer']['domain']
+g_channel = g_conf_net['channel']
 
 FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
 
@@ -89,6 +93,28 @@ def check_commit_readiness(chaincode_name, version):
             --init-required"
     subprocess.call(command, shell=True)
 
+def commit(chaincode_name, version):
+    print( '------------------------------------')
+    print(f' commit chaincode ({chaincode_name})')
+    print( '------------------------------------')
+    peer_addr_list = []
+    for org in g_conf_net['orgs']:
+        peer_domain = org['domain']
+        peer_name = org['peers'][0]['name']
+        peer_addr_list.append(f"--peerAddresses {peer_name}.{peer_domain}:7051")
+    peer_addr_list = ' '.join(peer_addr_list)
+    command = f"\
+        peer lifecycle chaincode commit \
+            --orderer orderer.{g_orderer_domain}:7050 \
+            --tls \
+            --cafile {g_path_orderer_ca} \
+            --channelID {g_channel} \
+            --name {chaincode_name} \
+            --version {version} \
+            --init-required \
+            {peer_addr_list}"
+    subprocess.call(command, shell=True)
+
 mode = sys.argv[1]
 
 if mode == 'install':
@@ -104,4 +130,8 @@ elif mode == 'check-commit-readiness':
     chaincode_name = sys.argv[2]
     version = sys.argv[3]
     check_commit_readiness(chaincode_name, version)
+elif mode == 'commit':
+    chaincode_name = sys.argv[2]
+    version = sys.argv[3]
+    commit(chaincode_name, version)
 

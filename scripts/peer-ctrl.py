@@ -58,7 +58,7 @@ def install(package_name, cc_path):
             --output json"
     subprocess.call(command, shell=True)
 
-def instantiate(chaincode_name, package_id, version):
+def instantiate(chaincode_name, version, package_id):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')

@@ -13,6 +13,22 @@ g_pwd = os.getcwd()
 g_path_orderer_ca = f'{g_pwd}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
 
 def install(package_name, cc_path):
+
+    pwd = os.getcwd()
+    os.chdir(cc_path)
+
+    print('------------------------------------')
+    print(' vendoring')
+    print('------------------------------------')
+    command = f" \
+            go mod init"
+    subprocess.call(command, shell=True)
+    command = f" \
+            GO111MODULE=on go mod vendor"
+    subprocess.call(command, shell=True)
+
+    os.chdir(pwd)
+
     print('------------------------------------')
     print(' packaging chaincode')
     print('------------------------------------')
@@ -29,8 +45,7 @@ def install(package_name, cc_path):
     print('------------------------------------')
     command = f" \
         peer lifecycle chaincode install \
-            cache/{package_name}.tar.gz \
-            --peerAddress localhost:7051"
+            cache/{package_name}.tar.gz"
     subprocess.call(command, shell=True)
 
     print('------------------------------------')
@@ -38,7 +53,6 @@ def install(package_name, cc_path):
     print('------------------------------------')
     command = f" \
         peer lifecycle chaincode queryinstalled \
-            --peerAddress localhost:7051 \
             --output json"
     subprocess.call(command, shell=True)
 

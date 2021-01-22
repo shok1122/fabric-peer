@@ -64,6 +64,9 @@ def deploy():
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)
 
+def clean():
+    subprocess.call('script/clean_all.sh', shell=True)
+
 if mode == 'setup':
     setup()
 elif mode == 'deploy':
@@ -73,4 +76,6 @@ elif mode == 'up':
 elif mode == 'all':
     deploy()
     network_up()
+elif mode == 'clean':
+    clean()
 

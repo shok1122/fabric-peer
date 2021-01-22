@@ -1,8 +1,13 @@
 #!/bin/sh
 
+echo 'stop docker images...'
+docker-compose -f docker/docker-compose.yaml down --volumes
+
+echo 'remove cache/*...'
 rm -rf cache/*
-rm -rf chaincodes/*
-rm -rf channel-artifacts/*
+
+echo 'remove conf/*...'
 rm -rf conf/*
-rm -rf docker/*
+
+echo 'remove organizations/*...'
 rm -rf organizations/*

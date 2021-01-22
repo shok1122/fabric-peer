@@ -14,6 +14,8 @@ g_domain = None
 g_org = None
 g_peer = None
 
+g_conf_net = None
+
 def setup():
     # install binaries
     files = os.listdir('bin')
@@ -30,13 +32,24 @@ def load_config_peer():
     global g_org
     global g_peer
 
-    g_conf_peer = None
+    if not os.path.isfile('cache/config-peer.yaml'):
+        return
+
     with open('cache/config-peer.yaml') as f:
         g_conf_peer = yaml.safe_load(f)
 
     g_domain = g_conf_peer['domain']
     g_org = g_conf_peer['org']
     g_peer = g_conf_peer['peer']
+
+def load_config_net():
+    global g_conf_net
+
+    if not os.path.isfile('cache/config-network.yaml'):
+        return
+
+    with open('cache/config-network.yaml') as f:
+        g_conf_net = yaml.safe_load(f)
 
 def deploy():
     arcfile = f'/tmp/organizations.tar.gz'
@@ -84,6 +97,7 @@ def deploy():
     shutil.copyfile(config_peer_file, 'cache/config-peer.yaml')
 
     load_config_peer()
+    load_config_net()
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)
@@ -93,8 +107,8 @@ def clean():
 
 # -- ENTRYPOINT -- #
 
-if os.path.isfile('cache/config-peer.yaml'):
-    load_config_peer()
+load_config_peer()
+load_config_net()
 
 mode = sys.argv[1]
 

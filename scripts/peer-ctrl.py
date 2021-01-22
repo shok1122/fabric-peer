@@ -3,9 +3,9 @@ import subprocess
 import sys
 import yaml
 
-g_conf_local = None
-with open('cache/config-local.yaml') as f:
-    g_conf_local = yaml.safe_load(f)
+g_conf_peer = None
+with open('cache/config-peer.yaml') as f:
+    g_conf_peer = yaml.safe_load(f)
 
 g_conf_net = None
 with open('cache/config-network.yaml') as f:

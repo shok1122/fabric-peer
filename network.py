@@ -14,11 +14,6 @@ g_domain = None
 g_org = None
 g_peer = None
 
-if os.path.isfile('cache/config-peer.yaml'):
-    load_config_peer()
-
-mode = sys.argv[1]
-
 def setup():
     # install binaries
     files = os.listdir('bin')
@@ -95,6 +90,13 @@ def network_up():
 
 def clean():
     subprocess.call('script/clean_all.sh', shell=True)
+
+# -- ENTRYPOINT -- #
+
+if os.path.isfile('cache/config-peer.yaml'):
+    load_config_peer()
+
+mode = sys.argv[1]
 
 if mode == 'setup':
     setup()

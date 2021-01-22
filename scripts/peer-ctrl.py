@@ -22,6 +22,9 @@ def call(command):
     #print(command)
     subprocess.call(command, shell=True)
 
+def get_tls_root_cert_path(peer_name, peer_domain):
+    return f"{FABRIC_CFG_PATH}/organizations/peerOrganizations/{peer_domain}/peers/{peer_name}.{peer_domain}/tls/ca.crt"
+
 def install(package_name, cc_path):
 
     pwd = os.getcwd()
@@ -102,11 +105,15 @@ def commit(chaincode_name, version):
     print(f' commit chaincode ({chaincode_name})')
     print( '------------------------------------')
     peer_addr_list = []
+    tls_root_cert_list = []
     for org in g_conf_net['orgs']:
         peer_domain = org['domain']
         peer_name = org['peers'][0]['name']
         peer_addr_list.append(f"--peerAddresses {peer_name}.{peer_domain}:7051")
+        tls_root_cert_path = get_tls_root_cert_path(peer_name, peer_domain)
+        tls_root_cert_list.append(f"--tlsRootCertFiles {tls_root_cert_path }")
     peer_addr_list = ' '.join(peer_addr_list)
+    tls_root_cert_list = ' '.join(tls_root_cert_list )
     command = f"\
         peer lifecycle chaincode commit \
             --orderer orderer.{g_orderer_domain}:7050 \
@@ -116,7 +123,8 @@ def commit(chaincode_name, version):
             --name {chaincode_name} \
             --version {version} \
             --init-required \
-            {peer_addr_list}"
+            {peer_addr_list} \
+            {tls_root_cert_list}"
     call(command)
 
 mode = sys.argv[1]

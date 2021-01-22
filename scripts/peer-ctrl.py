@@ -25,7 +25,7 @@ def call(command):
 def get_tls_root_cert_path(peer_name, peer_domain):
     return f"{FABRIC_CFG_PATH}/organizations/peerOrganizations/{peer_domain}/peers/{peer_name}.{peer_domain}/tls/ca.crt"
 
-def install(package_name, cc_path):
+def packaging(package_name, cc_path):
 
     pwd = os.getcwd()
     os.chdir(cc_path)
@@ -53,6 +53,7 @@ def install(package_name, cc_path):
             --label {package_name}"
     call(command)
 
+def install(chaincode_name, version, package_id):
     print('------------------------------------')
     print(' install chaincode')
     print('------------------------------------')
@@ -61,15 +62,6 @@ def install(package_name, cc_path):
             cache/{package_name}.tar.gz"
     call(command)
 
-    print('------------------------------------')
-    print(' queryinstalled')
-    print('------------------------------------')
-    command = f" \
-        peer lifecycle chaincode queryinstalled \
-            --output json"
-    call(command)
-
-def instantiate(chaincode_name, version, package_id):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -83,6 +75,15 @@ def instantiate(chaincode_name, version, package_id):
             --version {version} \
             --init-required \
             --package-id {package_id}"
+    call(command)
+
+def queryinstalled()
+    print('------------------------------------')
+    print(' queryinstalled')
+    print('------------------------------------')
+    command = f" \
+        peer lifecycle chaincode queryinstalled \
+            --output json"
     call(command)
 
 def check_commit_readiness(chaincode_name, version):
@@ -129,15 +130,15 @@ def commit(chaincode_name, version):
 
 mode = sys.argv[1]
 
-if mode == 'install':
+if mode == 'packaging':
     package_name = sys.argv[2]
     cc_path = sys.argv[3]
-    install(package_name, cc_path)
-elif mode == 'instantiate':
+    packaging(package_name, cc_path)
+elif mode == 'install':
     chaincode_name = sys.argv[2]
     version = sys.argv[3]
     package_id = sys.argv[4]
-    instantiate(chaincode_name, version, package_id)
+    install(chaincode_name, version, package_id)
 elif mode == 'check-commit-readiness':
     chaincode_name = sys.argv[2]
     version = sys.argv[3]

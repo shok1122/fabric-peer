@@ -130,7 +130,7 @@ def commit(chaincode_name, version):
             {tls_root_cert_list}"
     call(command)
 
-def get_installed_package(package_id, peer_domain, peer_name):
+def get_installed_package(package_id, peer_name, peer_domain):
     print( '---------------------------------------------------')
     print(f' get installed package ({chaincode_name})')
     print( '---------------------------------------------------')
@@ -169,5 +169,7 @@ elif mode == 'commit':
     commit(chaincode_name, version)
 elif mode == 'getinstalledpackage':
     package_id = sys.argv[2]
-    get_installed_package(package_id)
+    peer_name = sys.argv[3]
+    peer_domain = sys.argv[4]
+    get_installed_package(package_id, peer_name, peer_domain)
 

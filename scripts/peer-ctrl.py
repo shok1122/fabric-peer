@@ -25,6 +25,9 @@ def call(command):
 def get_tls_root_cert_path(peer_name, peer_domain):
     return f"{FABRIC_CFG_PATH}/organizations/peerOrganizations/{peer_domain}/peers/{peer_name}.{peer_domain}/tls/ca.crt"
 
+def help():
+    print('Usage: peer-ctrl.py [mode] [args...]')
+
 def packaging(package_name, cc_path):
 
     pwd = os.getcwd()
@@ -111,7 +114,7 @@ def commit(chaincode_name, version):
         peer_name = org['peers'][0]['name']
         peer_addr_list.append(f"--peerAddresses {peer_name}.{peer_domain}:7051")
         tls_root_cert_path = get_tls_root_cert_path(peer_name, peer_domain)
-        tls_root_cert_list.append(f"--tlsRootCertFiles {tls_root_cert_path }")
+        tls_root_cert_list.append(f"--tlsRootCertFiles {tls_root_cert_path}")
     peer_addr_list = ' '.join(peer_addr_list)
     tls_root_cert_list = ' '.join(tls_root_cert_list )
     command = f"\
@@ -127,9 +130,24 @@ def commit(chaincode_name, version):
             {tls_root_cert_list}"
     call(command)
 
+def get_installed_package(package_id, peer_domain, peer_name):
+    print( '---------------------------------------------------')
+    print(f' get installed package ({chaincode_name})')
+    print( '---------------------------------------------------')
+    tls_root_cert_path = get_tls_root_cert_path(peer_name, peer_domain)
+    command = f"\
+        peer lifecycle chaincode getinstalledpackage \
+            --package-id {package_id} \
+            --output-directory ./cache \
+            --peerAddresses {peer_name}.{peer_domain}:7051 \
+            --tlsRootCertFiles {tls_root_cert_path}"
+    call(command)
+
 mode = sys.argv[1]
 
-if mode == 'packaging':
+if mode == 'help':
+    help()
+elif mode == 'packaging':
     package_name = sys.argv[2]
     cc_path = sys.argv[3]
     packaging(package_name, cc_path)
@@ -149,4 +167,7 @@ elif mode == 'commit':
     chaincode_name = sys.argv[2]
     version = sys.argv[3]
     commit(chaincode_name, version)
+elif mode == 'getinstalledpackage':
+    package_id = sys.argv[2]
+    get_installed_package(package_id)
 

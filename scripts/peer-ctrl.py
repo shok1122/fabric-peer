@@ -140,6 +140,7 @@ def get_installed_package(package_id, peer_name, peer_domain):
         peer lifecycle chaincode getinstalledpackage \
             --package-id {package_id} \
             --output-directory ./cache \
+            --tls \
             --peerAddresses {peer_name}.{peer_domain}:7051 \
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)

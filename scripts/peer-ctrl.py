@@ -64,6 +64,7 @@ def install(package_path):
         peer lifecycle chaincode install {package_path}"
     call(command)
 
+def queryinstalled():
     print('------------------------------------')
     print(' queryinstalled')
     print('------------------------------------')
@@ -172,4 +173,6 @@ elif mode == 'getinstalledpackage':
     peer_name = sys.argv[3]
     peer_domain = sys.argv[4]
     get_installed_package(package_id, peer_name, peer_domain)
+elif mode == 'queryinstalled':
+    queryinstalled()
 

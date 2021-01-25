@@ -62,42 +62,44 @@ def deploy():
     # extract the fabric configuration files
     if not os.path.exists(arcfile):
         print(f'{arcfile} is not found...')
-        return
+        return False
     with tarfile.open(arcfile, 'r') as tar:
         tar.extractall()
 
     # copy the docker-compose configuration file
     if not os.path.exists(docker_compose_file):
         print(f'{docker_compose_file} is not found...')
-        return
+        return False
     shutil.copyfile(docker_compose_file, f'docker/docker-compose.yaml')
 
     # copy the configtx configuration file
     if not os.path.exists(configtx_conf_file):
         print(f'{configtx_conf_file} is not found...')
-        return
+        return False
     shutil.copyfile(configtx_conf_file, 'conf/configtx.yaml')
 
     # copy the core configuration file
     if not os.path.exists(core_conf_file):
         print(f'{core_conf_file} is not found...')
-        return
+        return False
     shutil.copyfile(core_conf_file, 'conf/core.yaml')
 
     # copy the network configuration file
     if not os.path.exists(config_net_file):
         print(f'{config_net_file} is not found...')
-        return
+        return False
     shutil.copyfile(config_net_file, 'cache/config-network.yaml')
 
     # copy the peer configuration file
     if not os.path.exists(config_peer_file):
         print(f'{config_peer_file} is not found...')
-        return
+        return False
     shutil.copyfile(config_peer_file, 'cache/config-peer.yaml')
 
     load_config_peer()
     load_config_net()
+
+    return True
 
 def network_up():
     subprocess.call('docker-compose -f docker/docker-compose.yaml up -d', shell=True)
@@ -112,15 +114,22 @@ load_config_net()
 
 mode = sys.argv[1]
 
+is_success = True
+
 if mode == 'setup':
     setup()
 elif mode == 'deploy':
-    deploy()
+    is_success = deploy()
 elif mode == 'up':
     network_up()
 elif mode == 'all':
-    deploy()
+    is_success = deploy()
     network_up()
 elif mode == 'clean':
     clean()
 
+if not is_success:
+    print("failure...")
+    sys.exit(1)
+
+sys.exit(0)

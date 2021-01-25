@@ -28,6 +28,43 @@ def get_tls_root_cert_path(peer_name, peer_domain):
 def help():
     print('Usage: peer-ctrl.py [mode] [args...]')
 
+def create_channel(channel_name):
+    print('------------------------------------')
+    print(' create channel')
+    print('------------------------------------')
+    command = f"\
+        configtxgen \
+            -profile SampleSingleMSPChannel \
+            -outputCreateChannelTx ./channel-artifacts/{channel_name}.tx \
+            -channelID {channel_name}"
+    call(command)
+
+    command = f"\
+        peer channel create \
+            --channelID {channel_name} \
+            --file ./channel-artifacts/{channel_name}.tx \
+            --tls \
+            --orderer orderer.{g_orderer_domain}:7050 \
+            --cafile {g_path_orderer_ca}"
+    call(command)
+
+def join_channel(channel_name):
+    print('------------------------------------')
+    print(' join channel')
+    print('------------------------------------')
+    command = f"\
+        peer channel fetch 0 ./channel-artifacts/{channel_name}.block \
+            --channelID {channel_name} \
+            --tls \
+            --orderer orderer.{g_orderer_domain}:7050 \
+            --cafile {g_path_orderer_ca}"
+    call(command)
+
+    command = f"\
+        peer channel join \
+            --blockpath ./channel-artifacts/{channel_name}.block"
+    call(command)
+
 def packaging(package_name, cc_path):
 
     pwd = os.getcwd()
@@ -149,6 +186,12 @@ mode = sys.argv[1]
 
 if mode == 'help':
     help()
+elif mode == 'createchannel':
+    channel_name = sys.argv[2]
+    create_channel(channel_name)
+elif mode == 'joinchannel':
+    channel_name = sys.argv[2]
+    join_channel(channel_name)
 elif mode == 'packaging':
     package_name = sys.argv[2]
     cc_path = sys.argv[3]

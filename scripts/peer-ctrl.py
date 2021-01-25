@@ -132,7 +132,7 @@ def commit(chaincode_name, version):
 
 def get_installed_package(package_id, peer_name, peer_domain):
     print( '---------------------------------------------------')
-    print(f' get installed package ({chaincode_name})')
+    print(f' get installed package')
     print( '---------------------------------------------------')
     tls_root_cert_path = get_tls_root_cert_path(peer_name, peer_domain)
     command = f"\

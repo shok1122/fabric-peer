@@ -65,9 +65,11 @@ def join_channel(channel_name):
             --blockpath ./channel-artifacts/{channel_name}.block"
     call(command)
 
-def packaging(package_name, cc_path):
+def packaging(package_name, cc_dir_name):
 
     pwd = os.getcwd()
+
+    cc_path = f"src/{cc_dir_name}"
     os.chdir(cc_path)
 
     print('------------------------------------')
@@ -88,7 +90,7 @@ def packaging(package_name, cc_path):
     command = f" \
         peer lifecycle chaincode package \
             cache/{package_name}.tar.gz \
-            --path {cc_path} \
+            --path {cc_dir_name} \
             --lang golang \
             --label {package_name}"
     call(command)
@@ -107,6 +109,16 @@ def queryinstalled():
     print('------------------------------------')
     command = f" \
         peer lifecycle chaincode queryinstalled \
+            --output json"
+    call(command)
+
+def querycommitted():
+    print('------------------------------------')
+    print(' querycommitted')
+    print('------------------------------------')
+    command = f" \
+        peer lifecycle chaincode querycommitted \
+            --channelID {g_channel} \
             --output json"
     call(command)
 
@@ -178,6 +190,7 @@ def get_installed_package(package_id, peer_name, peer_domain):
             --package-id {package_id} \
             --output-directory ./cache \
             --tls \
+            --channelID {g_channel} \
             --peerAddresses {peer_name}.{peer_domain}:7051 \
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)
@@ -194,8 +207,8 @@ elif mode == 'joinchannel':
     join_channel(channel_name)
 elif mode == 'packaging':
     package_name = sys.argv[2]
-    cc_path = sys.argv[3]
-    packaging(package_name, cc_path)
+    cc_dir_name = sys.argv[3]
+    packaging(package_name, cc_dir_name)
 elif mode == 'install':
     package_path = sys.argv[2]
     install(package_path)
@@ -219,4 +232,6 @@ elif mode == 'getinstalledpackage':
     get_installed_package(package_id, peer_name, peer_domain)
 elif mode == 'queryinstalled':
     queryinstalled()
+elif mode == 'querycommitted':
+    querycommitted()
 

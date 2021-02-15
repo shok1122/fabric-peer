@@ -190,7 +190,6 @@ def get_installed_package(package_id, peer_name, peer_domain):
             --package-id {package_id} \
             --output-directory ./cache \
             --tls \
-            --channelID {g_channel} \
             --peerAddresses {peer_name}.{peer_domain}:7051 \
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)

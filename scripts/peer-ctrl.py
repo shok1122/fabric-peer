@@ -139,7 +139,7 @@ def querycommitted():
             --output json"
     call(command)
 
-def approve(chaincode_name, version, package_id):
+def approve(chaincode_name, version, sequence, package_id):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -151,6 +151,7 @@ def approve(chaincode_name, version, package_id):
             --channelID {g_channel} \
             --name {chaincode_name} \
             --version {version} \
+            --sequence {sequence} \
             --init-required \
             --package-id {package_id}"
     call(command)
@@ -295,8 +296,9 @@ elif opt == 'cc':
     elif subopt == 'approve':
         chaincode_name = sys.argv[3]
         version = sys.argv[4]
-        package_id = sys.argv[5]
-        approve(chaincode_name, version, package_id)
+        sequence = sys.argv[5]
+        package_id = sys.argv[6]
+        approve(chaincode_name, version, sequence, package_id)
     elif subopt == 'commit':
         chaincode_name = sys.argv[3]
         version = sys.argv[4]

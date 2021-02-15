@@ -23,6 +23,22 @@ def call(command):
     #print(command)
     subprocess.call(command, shell=True)
 
+def get_anchor_addr_list():
+    addr_list = []
+    for org in g_conf_net['orgs']:
+        peer_domain = org['domain']
+        if peer_domain == g_conf_peer['domain']:
+            continue
+        peer_name = org['peers'][0]['name']
+        addr_list.append(
+            {
+                "name": peer_name,
+                "domain": peer_domain,
+                "port": "7051"
+            }
+        )
+    return addr_list
+
 def get_tls_root_cert_path(peer_name, peer_domain):
     return f"{FABRIC_CFG_PATH}/organizations/peerOrganizations/{peer_domain}/peers/{peer_name}.{peer_domain}/tls/ca.crt"
 
@@ -195,19 +211,65 @@ def get_installed_package(package_id, peer_name, peer_domain):
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)
 
-def query(chaincode_name, chaincode_args):
+def query(chaincode_name, chaincode_func, chaincode_args):
 
-    chaincode_args_text = json.dumps(chaincode_args)
+    args = {}
+    args["function"] = chaincode_func
+    args["Args"] = chaincode_args
+
+    args_text = json.dumps(chaincode_args)
 
     print( '---------------------------------------------------')
-    print(f' query')
+    print(f' query: {chaincode_func}')
     print( '---------------------------------------------------')
     command = f"\
         peer chaincode query \
             --channelID {g_channel} \
             --name {chaincode_name} \
-            --ctor '{chaincode_args_text}'"
+            --ctor '{args_text}'"
     call(command)
+
+def invoke(chaincode_name, chaincode_func, chaincode_args, init_flag):
+
+    args = {}
+    args["function"] = chaincode_func
+    args["Args"] = chaincode_args
+
+    args_text = json.dumps(chaincode_args)
+
+    addr_list = get_anchor_addr_list()
+
+    list_peerAddresses = []
+    list_tlsRootCertFiles = []
+    for x in addr_list:
+        list_peerAddresses.append(f"--peerAddresses {x['name']}.{x['domain']}:{x['port']}")
+        tls_root_cert_path = get_tls_root_cert_path(x['name'], x['domain'])
+        list_tlsRootCertFiles.append(f"--tlsRootCertFiles {tls_root_cert_path}")
+    opt_peerAddresses = ' '.join(list_peerAddresses)
+    opt_tlsRootCertFiles = ' '.join(list_tlsRootCertFiles)
+
+    opt_isInit = ""
+    if init_flag:
+        opt_isInit = "--isInit"
+
+    print( '---------------------------------------------------')
+    print(f' invoke: {chaincode_func}')
+    print( '---------------------------------------------------')
+    command = f"\
+        peer chaincode invoke \
+            --channelID {g_channel} \
+            --tls \
+            --orderer orderer.{g_orderer_domain}:7050 \
+            --cafile {g_path_orderer_ca} \
+            {opt_peerAddresses} \
+            {opt_tlsRootCertFiles} \
+            {opt_isInit} \
+            --name {chaincode_name} \
+            --ctor '{args_text}'"
+    call(command)
+
+def init_ledger(chaincode_name):
+    invoke(chaincode_name, "InitLedger", [], True)
 
 opt = sys.argv[1]
 
@@ -245,10 +307,18 @@ elif opt == 'cc':
         peer_domain = sys.argv[5]
         get_installed_package(package_id, peer_name, peer_domain)
     elif subopt == 'query':
-        chaincode_args = {}
         chaincode_name = sys.argv[3]
-        chaincode_args['Args'] = sys.argv[4:]
-        query(chaincode_name, chaincode_args)
+        chaincode_func = sys.argv[4]
+        chaincode_args = sys.argv[5:]
+        query(chaincode_name, chaincode_func, chaincode_args)
+    elif subopt == 'invoke':
+        chaincode_name = sys.argv[3]
+        chaincode_func = sys.argv[4]
+        chaincode_args = sys.argv[5:]
+        invoke(chaincode_name, chaincode_func, chaincode_args, False)
+    elif subopt == 'init-ledger':
+        chaincode_name = sys.argv[3]
+        init_ledger(chaincode_name)
 elif opt == 'check':
     subopt = sys.argv[2]
     if subopt == 'commit-readiness':

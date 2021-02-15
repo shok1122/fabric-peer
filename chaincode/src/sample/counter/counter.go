@@ -36,6 +36,18 @@ func getCount(ctx contractapi.TransactionContextInterface, key string) (int, err
     return iCount, nil
 }
 
+func (cc *CcCounter) InitLedger(ctx contractapi.TransactionContextInterface) error {
+
+    err := ctx.GetStub().PutState("A", "0")
+
+    if err != nil {
+        return errors.New("Internal error")
+    }
+
+    return nil
+
+}
+
 func (cc *CcCounter) Get(ctx contractapi.TransactionContextInterface, key string) (string, error) {
 
     iCount, err := getCount(ctx, key)

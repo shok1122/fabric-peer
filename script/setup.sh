@@ -1,10 +1,10 @@
 #/bin/sh
 
 if [ "binary" = "$1" ]; then
-    curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.1.1 1.4.7 0.4.20 -ds
+    curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.3.0 1.4.9 -ds
 fi
 
 if [ "docker" = "$1" ]; then
-    curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.1.1 1.4.7 0.4.20 -bs
+    curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.3.0 1.4.9 -bs
     docker build -t hyperledger/fabric-tools:custom -f docker/Dockerfile-cli .
 fi

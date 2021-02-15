@@ -199,39 +199,45 @@ mode = sys.argv[1]
 
 if mode == 'help':
     help()
-elif mode == 'createchannel':
-    channel_name = sys.argv[2]
-    create_channel(channel_name)
-elif mode == 'joinchannel':
-    channel_name = sys.argv[2]
-    join_channel(channel_name)
-elif mode == 'packaging':
-    package_name = sys.argv[2]
-    cc_dir_name = sys.argv[3]
-    packaging(package_name, cc_dir_name)
-elif mode == 'install':
-    package_path = sys.argv[2]
-    install(package_path)
-elif mode == 'approve':
-    chaincode_name = sys.argv[2]
-    version = sys.argv[3]
-    package_id = sys.argv[4]
-    approve(chaincode_name, version, package_id)
-elif mode == 'check-commit-readiness':
-    chaincode_name = sys.argv[2]
-    version = sys.argv[3]
-    check_commit_readiness(chaincode_name, version)
-elif mode == 'commit':
-    chaincode_name = sys.argv[2]
-    version = sys.argv[3]
-    commit(chaincode_name, version)
-elif mode == 'getinstalledpackage':
-    package_id = sys.argv[2]
-    peer_name = sys.argv[3]
-    peer_domain = sys.argv[4]
-    get_installed_package(package_id, peer_name, peer_domain)
-elif mode == 'queryinstalled':
-    queryinstalled()
-elif mode == 'querycommitted':
-    querycommitted()
+elif mode == 'channel':
+    subopt = sys.argv[2]
+    if subopt == 'create':
+        channel_name = sys.argv[3]
+        create_channel(channel_name)
+    elif subopt == 'join':
+        channel_name = sys.argv[3]
+        join_channel(channel_name)
+elif mode == 'cc':
+    subopt = sys.argv[2]
+    if subopt == 'packing':
+        package_name = sys.argv[3]
+        cc_dir_name = sys.argv[4]
+        packaging(package_name, cc_dir_name)
+    elif subopt == 'install':
+        package_path = sys.argv[3]
+        install(package_path)
+    elif subopt == 'approve':
+        chaincode_name = sys.argv[3]
+        version = sys.argv[4]
+        package_id = sys.argv[5]
+        approve(chaincode_name, version, package_id)
+    elif subopt == 'commit':
+        chaincode_name = sys.argv[3]
+        version = sys.argv[4]
+        commit(chaincode_name, version)
+    elif subopt == 'get-package':
+        package_id = sys.argv[3]
+        peer_name = sys.argv[4]
+        peer_domain = sys.argv[5]
+        get_installed_package(package_id, peer_name, peer_domain)
+elif mode == 'check':
+    subopt = sys.argv[2]
+    if subopt == 'commit-readiness':
+        chaincode_name = sys.argv[3]
+        version = sys.argv[4]
+        check_commit_readiness(chaincode_name, version)
+    elif subopt == 'installed-package':
+        queryinstalled()
+    elif subopt == 'committed-package':
+        querycommitted()
 

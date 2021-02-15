@@ -238,7 +238,7 @@ def invoke(chaincode_name, chaincode_func, chaincode_args, init_flag):
     args["function"] = chaincode_func
     args["Args"] = chaincode_args
 
-    args_text = json.dumps(chaincode_args)
+    args_text = json.dumps(args)
 
     addr_list = get_anchor_addr_list()
 

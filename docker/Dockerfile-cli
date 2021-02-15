@@ -1,7 +1,10 @@
 FROM hyperledger/fabric-tools
 
-RUN apk add python3 && \
-    pip3 install --upgrade pip && \
+RUN apk add \
+    python3 \
+    py3-pip
+
+RUN pip3 install --upgrade pip && \
     pip3 install \
         pyyaml
 

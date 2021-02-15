@@ -2,6 +2,7 @@ package main
 
 import (
     "sample/counter"
+    "fmt"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )

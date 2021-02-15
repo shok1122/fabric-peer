@@ -156,7 +156,7 @@ def approve(chaincode_name, version, sequence, package_id):
             --package-id {package_id}"
     call(command)
 
-def check_commit_readiness(chaincode_name, version):
+def check_commit_readiness(chaincode_name, version, sequence):
     print('------------------------------------')
     print(' check commit readiness')
     print('------------------------------------')
@@ -168,10 +168,11 @@ def check_commit_readiness(chaincode_name, version):
             --channelID {g_channel} \
             --name {chaincode_name} \
             --version {version} \
+            --sequence {sequence} \
             --init-required"
     call(command)
 
-def commit(chaincode_name, version):
+def commit(chaincode_name, version, sequence):
     print( '------------------------------------')
     print(f' commit chaincode ({chaincode_name})')
     print( '------------------------------------')
@@ -193,6 +194,7 @@ def commit(chaincode_name, version):
             --channelID {g_channel} \
             --name {chaincode_name} \
             --version {version} \
+            --sequence {sequence} \
             --init-required \
             {peer_addr_list} \
             {tls_root_cert_list}"
@@ -302,7 +304,8 @@ elif opt == 'cc':
     elif subopt == 'commit':
         chaincode_name = sys.argv[3]
         version = sys.argv[4]
-        commit(chaincode_name, version)
+        sequence = sys.argv[5]
+        commit(chaincode_name, version, sequence)
     elif subopt == 'get-package':
         package_id = sys.argv[3]
         peer_name = sys.argv[4]
@@ -326,7 +329,8 @@ elif opt == 'check':
     if subopt == 'commit-readiness':
         chaincode_name = sys.argv[3]
         version = sys.argv[4]
-        check_commit_readiness(chaincode_name, version)
+        sequence = sys.argv[5]
+        check_commit_readiness(chaincode_name, version, sequence)
     elif subopt == 'installed-package':
         queryinstalled()
     elif subopt == 'committed-package':

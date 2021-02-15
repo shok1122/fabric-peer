@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import yaml
+import json
 
 g_conf_peer = None
 with open('cache/config-peer.yaml') as f:
@@ -26,7 +27,7 @@ def get_tls_root_cert_path(peer_name, peer_domain):
     return f"{FABRIC_CFG_PATH}/organizations/peerOrganizations/{peer_domain}/peers/{peer_name}.{peer_domain}/tls/ca.crt"
 
 def help():
-    print('Usage: peer-ctrl.py [mode] [args...]')
+    print('Usage: peer-ctrl.py [opt] [args...]')
 
 def create_channel(channel_name):
     print('------------------------------------')
@@ -194,11 +195,25 @@ def get_installed_package(package_id, peer_name, peer_domain):
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)
 
-mode = sys.argv[1]
+def query(chaincode_name, chaincode_args):
 
-if mode == 'help':
+    chaincode_args_text = json.dumps(chaincode_args)
+
+    print( '---------------------------------------------------')
+    print(f' query')
+    print( '---------------------------------------------------')
+    command = f"\
+        peer chaincode query \
+            --channelID {g_channel} \
+            --name {chaincode_name} \
+            --ctor '{chaincode_args_text}'"
+    call(command)
+
+opt = sys.argv[1]
+
+if opt == 'help':
     help()
-elif mode == 'channel':
+elif opt == 'channel':
     subopt = sys.argv[2]
     if subopt == 'create':
         channel_name = sys.argv[3]
@@ -206,7 +221,7 @@ elif mode == 'channel':
     elif subopt == 'join':
         channel_name = sys.argv[3]
         join_channel(channel_name)
-elif mode == 'cc':
+elif opt == 'cc':
     subopt = sys.argv[2]
     if subopt == 'packing':
         package_name = sys.argv[3]
@@ -229,7 +244,12 @@ elif mode == 'cc':
         peer_name = sys.argv[4]
         peer_domain = sys.argv[5]
         get_installed_package(package_id, peer_name, peer_domain)
-elif mode == 'check':
+    elif subopt == 'query':
+        chaincode_args = {}
+        chaincode_name = sys.argv[3]
+        chaincode_args['Args'] = sys.argv[4:]
+        query(chaincode_name, chaincode_args)
+elif opt == 'check':
     subopt = sys.argv[2]
     if subopt == 'commit-readiness':
         chaincode_name = sys.argv[3]
@@ -239,4 +259,3 @@ elif mode == 'check':
         queryinstalled()
     elif subopt == 'committed-package':
         querycommitted()
-

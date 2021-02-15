@@ -220,7 +220,7 @@ def query(chaincode_name, chaincode_func, chaincode_args):
     args["function"] = chaincode_func
     args["Args"] = chaincode_args
 
-    args_text = json.dumps(chaincode_args)
+    args_text = json.dumps(args)
 
     print( '---------------------------------------------------')
     print(f' query: {chaincode_func}')

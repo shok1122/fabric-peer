@@ -43,121 +43,61 @@ python ctrl.py up
 
 ## Enter the cli container
 
-All processing (e.g. creating a channel, joining a channel, creating a chaincode and so on) is done inside the cli container.
+All processing (e.g. creating a channel, joining a channel, creating a chaincode and so on) is executed inside the cli container.
 You can enter the cli container with the following command.
 
 ```
 docker exec -it cli bash
 ```
 
-# Build your a channel
+# Start up your channel
 
 ## Create a channel
 
+The channel is created by the following command.
+
 ```
-python3 scripts/peer-ctrl.py channel create xkeycloak
+python3 scripts/peer-ctrl.py channel create <channel name>
 ```
 
 ## Join the channel
 
-```
-python3 scripts/peer-ctrl.py channel join xkeycloak
-```
+The peers join the created channel by the following command.
+All peers joining the channel need to run this command.
 
 ```
-python3 scripts/peer-ctrl.py cc packing sample src/sample
+python3 scripts/peer-ctrl.py channel join <channel name>
 ```
 
+# Build your chaincode
+
+## Prepare a package of a chaincode to be committed
+
+You can create the package of the chaincode with any name you like.
+This command only supports golang.
+We provide a sample chaincode in the src/sample directory.
+The package is created in the cache directory with the name <chaincode name>.tar.gz.
+
 ```
-python3 scripts/peer-ctrl.py cc install cache/sample.tar.gz
+python3 scripts/peer-ctrl.py cc packing <chaincode name> <chaincode path>
 ```
+
+The following command install the package.
+
+```
+python3 scripts/peer-ctrl.py cc install cache/<chaincode name>.tar.gz
+```
+
+When the install command is invoked, the package identifier is generated.
+In the following example, `sample:08ad586a9e1558ef6754bcf6842581899369516b43e6d9f405a8b7f7edb8daae` is the package identifier.
+This package identifier will be used later.
 
 ```
 2021-03-24 10:32:56.981 UTC [cli.lifecycle.chaincode] submitInstallProposal -> INFO 001 Installed remotely: response:<status:200 payload:"\nGsample:08ad586a9e1558ef6754bcf6842581899369516b43e6d9f405a8b7f7edb8daae\022\006sample" >
 2021-03-24 10:32:56.981 UTC [cli.lifecycle.chaincode] submitInstallProposal -> INFO 002 Chaincode code package identifier: sample:08ad586a9e1558ef6754bcf6842581899369516b43e6d9f405a8b7f7edb8daae
 ```
 
-```
-python3 scripts/peer-ctrl.py cc approve sample 1.0 1 sample:08ad586a9e1558ef6754bcf6842581899369516b43e6d9f405a8b7f7edb8daae
-```
-
-```
-python3 scripts/peer-ctrl.py cc commit sample 1.0 1
-```
-
-```
-------------------------------------
- querycommitted
-------------------------------------
-{
-        "chaincode_definitions": [
-                {
-                        "name": "sample",
-                        "sequence": 1,
-                        "version": "1.0",
-                        "endorsement_plugin": "escc",
-                        "validation_plugin": "vscc",
-                        "validation_parameter": "EiAvQ2hhbm5lbC9BcHBsaWNhdGlvbi9FbmRvcnNlbWVudA==",
-                        "collections": {},
-                        "init_required": true
-                }
-        ]
-}
-```
-
-```
-python3 scripts/peer-ctrl.py cc init-ledger sample
-```
-
-```
-bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Reset X
----------------------------------------------------
- invoke: Reset
----------------------------------------------------
-2021-03-24 11:28:05.538 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200
-bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
----------------------------------------------------
- invoke: Countup
----------------------------------------------------
-2021-03-24 11:28:29.215 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"1"
-bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
----------------------------------------------------
- invoke: Countup
----------------------------------------------------
-2021-03-24 11:28:31.535 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"2"
-bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
----------------------------------------------------
- invoke: Countup
----------------------------------------------------
-2021-03-24 11:28:34.717 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"3"
-```
-
-```
-python3 scripts/peer-ctrl.py cc query sample Get X
----------------------------------------------------
- query: Get
----------------------------------------------------
-3
-```
-
-```
-python3 scripts/peer-ctrl.py cc invoke sample Reset X
----------------------------------------------------
- invoke: Reset
----------------------------------------------------
-2021-03-24 11:30:00.338 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200
-bash-5.0# python3 scripts/peer-ctrl.py cc query sample Get X
----------------------------------------------------
- query: Get
----------------------------------------------------
-0
-```
-
-# Check
-
-```
-python3 scripts/peer-ctrl.py check commit-readiness sample 1.0 1
-```
+You can check all installed package in your organization by the following command.
 
 ```
 python3 scripts/peer-ctrl.py check installed-package
@@ -184,23 +124,120 @@ python3 scripts/peer-ctrl.py check installed-package
 }
 ```
 
+Now you can approve the package to be comitted.
+The chaincode has a version number and a sequence number.
+
+```
+python3 scripts/peer-ctrl.py cc approve sample <version number> <sequence number> <package identifier>
+```
+
+All three commands above need to be invoked on all necessary organizations.
+You can check which organization has approved the chaincode with the following command.
+
+```
+python3 scripts/peer-ctrl.py check commit-readiness <chaincode name> <version name> <sequence number>
+```
+
+## Commit the chaincode
+
+When all necessary organizations approve commit of the chaincode, you can commit the chaincode.
+
+```
+python3 scripts/peer-ctrl.py cc commit <chaincode name> <version number> <sequence number>
+```
+
+You can check committed packages of all chaincodes by the following comamand.
+
 ```
 python3 scripts/peer-ctrl.py check committed-package
-------------------------------------
- querycommitted
-------------------------------------
+```
+
+The output example is below.
+In this example, the chaincode named `sample` is comitted.
+This chaincode has version 1.0 and sequence 1.
+Moreover, you can see that `init_required` is true.
+
+```
 {
-    "chaincode_definitions": [
-        {
-            "name": "sample",
-            "sequence": 1,
-            "version": "1.0",
-            "endorsement_plugin": "escc",
-            "validation_plugin": "vscc",
-            "validation_parameter": "EiAvQ2hhbm5lbC9BcHBsaWNhdGlvbi9FbmRvcnNlbWVudA==",
-            "collections": {},
-            "init_required": true
-        }
-    ]
+        "chaincode_definitions": [
+                {
+                        "name": "sample",
+                        "sequence": 1,
+                        "version": "1.0",
+                        "endorsement_plugin": "escc",
+                        "validation_plugin": "vscc",
+                        "validation_parameter": "EiAvQ2hhbm5lbC9BcHBsaWNhdGlvbi9FbmRvcnNlbWVudA==",
+                        "collections": {},
+                        "init_required": true
+                }
+        ]
 }
 ```
+
+If `init_required` is true, you must invoke `init-ledger`.
+
+```
+python3 scripts/peer-ctrl.py cc init-ledger <chaincode name>
+```
+
+Now you are ready to execute the chaincode.
+
+# Execute the chaincode
+
+There are two ways to execute chaincode: query and invoke.
+To read from the ledger, you can use `query`.
+To write to the ledger, you can use `invoke`.
+
+The chaincode used in this example counts up a value of the specified key.
+Before counting up the value, the key must be reset.
+
+The following example prepare the key X and counts up the value of the key X three times.
+In the end, the value of the key X is reset to zero.
+
+```
+bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Reset X
+---------------------------------------------------
+ invoke: Reset
+---------------------------------------------------
+2021-03-24 11:28:05.538 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200
+
+bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
+---------------------------------------------------
+ invoke: Countup
+---------------------------------------------------
+2021-03-24 11:28:29.215 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"1"
+
+bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
+---------------------------------------------------
+ invoke: Countup
+---------------------------------------------------
+2021-03-24 11:28:31.535 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"2"
+
+bash-5.0# python3 scripts/peer-ctrl.py cc invoke sample Countup X
+---------------------------------------------------
+ invoke: Countup
+---------------------------------------------------
+2021-03-24 11:28:34.717 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200 payload:"3"
+
+python3 scripts/peer-ctrl.py cc query sample Get X
+---------------------------------------------------
+ query: Get
+---------------------------------------------------
+3
+
+python3 scripts/peer-ctrl.py cc invoke sample Reset X
+---------------------------------------------------
+ invoke: Reset
+---------------------------------------------------
+2021-03-24 11:30:00.338 UTC [chaincodeCmd] chaincodeInvokeOrQuery -> INFO 001 Chaincode invoke successful. result: status:200
+
+bash-5.0# python3 scripts/peer-ctrl.py cc query sample Get X
+---------------------------------------------------
+ query: Get
+---------------------------------------------------
+0
+```
+
+# Check
+
+

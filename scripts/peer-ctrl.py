@@ -82,11 +82,10 @@ def join_channel(channel_name):
             --blockpath ./channel-artifacts/{channel_name}.block"
     call(command)
 
-def packaging(package_name, cc_dir_name):
+def packaging(package_name, cc_path):
 
     pwd = os.getcwd()
 
-    cc_path = f"src/{cc_dir_name}"
     os.chdir(cc_path)
 
     print('------------------------------------')
@@ -107,7 +106,7 @@ def packaging(package_name, cc_dir_name):
     command = f" \
         peer lifecycle chaincode package \
             cache/{package_name}.tar.gz \
-            --path {cc_dir_name} \
+            --path {cc_path} \
             --lang golang \
             --label {package_name}"
     call(command)

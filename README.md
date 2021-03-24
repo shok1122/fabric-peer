@@ -18,7 +18,7 @@ The following steps guide you through the installation and the building network.
 The following command installs the Hyperledger Fabric binaries and the Hyperledger Fabric docker images by following the command.
 
 ```
-python network.py install
+python ctrl.py install
 ```
 
 ## Deploy a Key Material
@@ -28,7 +28,7 @@ The key material is packed into tar.gz files, which are sent to `/tmp` directoy.
 The following command extracts the tar.gz files and deploy the keymaterial to specified path.
 
 ```
-python network.py deploy
+python ctrl.py deploy
 ```
 
 ## Run a Peer Container
@@ -37,6 +37,6 @@ You can run a peer by the up option.
 The peer works with Docker.
 
 ```
-python network.py up
+python ctrl.py up
 ```
 

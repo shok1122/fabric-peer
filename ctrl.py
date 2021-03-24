@@ -16,15 +16,15 @@ g_peer = None
 
 g_conf_net = None
 
-def setup():
+def install():
     # install binaries
     files = os.listdir('bin')
     files = [ f for f in files if not f.startswith('.') ]
     if not files:
-        subprocess.call('script/setup.sh binary', shell=True)
+        subprocess.call('script/install.sh binary', shell=True)
 
     # install docker images
-    subprocess.call('script/setup.sh docker', shell=True)
+    subprocess.call('script/install.sh docker', shell=True)
 
 def load_config_peer():
     global g_conf_peer
@@ -116,8 +116,8 @@ mode = sys.argv[1]
 
 is_success = True
 
-if mode == 'setup':
-    setup()
+if mode == 'install':
+    install()
 elif mode == 'deploy':
     is_success = deploy()
 elif mode == 'up':

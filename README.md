@@ -237,7 +237,3 @@ bash-5.0# python3 scripts/peer-ctrl.py cc query sample Get X
 ---------------------------------------------------
 0
 ```
-
-# Check
-
-

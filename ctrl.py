@@ -4,6 +4,7 @@ import shutil
 import sys
 import tarfile
 import yaml
+from jinja2 import Template, Environment, FileSystemLoader
 
 ENV_PATH = os.getenv('PATH')
 os.environ['PATH'] = os.getcwd() + '/bin:' + ENV_PATH
@@ -15,6 +16,15 @@ g_org = None
 g_peer = None
 
 g_conf_net = None
+
+def render(file_name, conf):
+    env = Environment(loader=FileSystemLoader('template'))
+    template = env.get_template(file_name)
+    return template.render(conf)
+
+def save_file(path, data):
+    with open(path, 'w') as f:
+        f.write(data)
 
 def install():
     # install binaries
@@ -67,12 +77,6 @@ def deploy():
     with tarfile.open(arcfile, 'r') as tar:
         tar.extractall()
 
-    # copy the docker-compose configuration file
-    if not os.path.exists(docker_compose_file):
-        print(f'{docker_compose_file} is not found...')
-        return False
-    shutil.copyfile(docker_compose_file, f'docker/docker-compose.yaml')
-
     # copy the configtx configuration file
     if not os.path.exists(configtx_conf_file):
         print(f'{configtx_conf_file} is not found...')
@@ -96,6 +100,12 @@ def deploy():
         print(f'{config_peer_file} is not found...')
         return False
     shutil.copyfile(config_peer_file, 'cache/config-peer.yaml')
+
+    # generate a docker-compose configuration file from the template
+    with open('cache/config-peer.yaml') as f:
+        peer_conf = yaml.safe_load(f)
+        ret_text = render('docker-compose.yaml.tmpl', peer_conf)
+        save_file('docker/docker-compose.yaml', ret_text)
 
     load_config_peer()
     load_config_net()

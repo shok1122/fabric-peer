@@ -1,15 +1,18 @@
 name: fabric
 channels:
+  - anaconda
   - defaults
 dependencies:
   - _libgcc_mutex=0.1=main
   - ca-certificates=2020.10.14=0
-  - certifi=2020.12.5=py38h06a4308_0
+  - certifi=2020.6.20=py38_0
+  - jinja2=2.11.2=py_0
   - ld_impl_linux-64=2.33.1=h53a641e_7
   - libedit=3.1.20191231=h14c3975_1
   - libffi=3.3=he6710b0_2
   - libgcc-ng=9.1.0=hdf63c60_0
   - libstdcxx-ng=9.1.0=hdf63c60_0
+  - markupsafe=1.1.1=py38h7b6447c_0
   - ncurses=6.2=he6710b0_1
   - openssl=1.1.1h=h7b6447c_0
   - pip=20.3.1=py38h06a4308_0

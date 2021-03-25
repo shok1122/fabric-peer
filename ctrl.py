@@ -109,7 +109,9 @@ def network_down():
     subprocess.call('docker-compose -f docker/docker-compose.yaml down', shell=True)
 
 def clean():
-    subprocess.call('script/clean_all.sh', shell=True)
+    subprocess.call('rm -rf cache/*', shell=True)
+    subprocess.call('rm -rf conf/*', shell=True)
+    subprocess.call('rm -rf organizations/*', shell=True)
 
 # -- ENTRYPOINT -- #
 

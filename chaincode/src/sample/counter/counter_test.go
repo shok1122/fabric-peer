@@ -45,7 +45,7 @@ func TryReset(m *TestMaterials, key string) error {
 
 func TryCountup(m *TestMaterials, key string) (string, error) {
     m.mockStub.MockTransactionStart("txID_Countup")
-    count, err := m.cc.TryCountup(m.ctx, key)
+    count, err := m.cc.Countup(m.ctx, key)
     m.mockStub.MockTransactionEnd("txID_Countup")
     return count, err
 }

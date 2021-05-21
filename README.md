@@ -41,6 +41,8 @@ The cli container is an command line interface for the network.
 python ctrl.py up
 ```
 
+# Start up your channel
+
 ## Enter the cli container
 
 All processing (e.g. creating a channel, joining a channel, creating a chaincode and so on) is executed inside the cli container.
@@ -49,8 +51,6 @@ You can enter the cli container with the following command.
 ```
 docker exec -it cli bash
 ```
-
-# Start up your channel
 
 ## Create a channel
 
@@ -74,7 +74,7 @@ python3 scripts/peer-ctrl.py channel join <channel name>
 ## Prepare a package of a chaincode to be committed
 
 You can create the package of the chaincode with any name you like.
-This command only supports golang.
+This command supports golang only.
 We provide a sample chaincode in the src/sample directory.
 The package is created in the cache directory with the name <chaincode name>.tar.gz.
 
@@ -128,14 +128,14 @@ Now you can approve the package to be comitted.
 The chaincode has a version number and a sequence number.
 
 ```
-python3 scripts/peer-ctrl.py cc approve sample <version number> <sequence number> <package identifier>
+python3 scripts/peer-ctrl.py cc approve <channel> <chaincode name> <version number> <sequence number> <package identifier>
 ```
 
 All three commands above need to be invoked on all necessary organizations.
 You can check which organization has approved the chaincode with the following command.
 
 ```
-python3 scripts/peer-ctrl.py check commit-readiness <chaincode name> <version name> <sequence number>
+python3 scripts/peer-ctrl.py check commit-readiness <channel> <chaincode name> <version name> <sequence number>
 ```
 
 ## Commit the chaincode
@@ -143,13 +143,13 @@ python3 scripts/peer-ctrl.py check commit-readiness <chaincode name> <version na
 When all necessary organizations approve commit of the chaincode, you can commit the chaincode.
 
 ```
-python3 scripts/peer-ctrl.py cc commit <chaincode name> <version number> <sequence number>
+python3 scripts/peer-ctrl.py cc commit <channel> <chaincode name> <version number> <sequence number>
 ```
 
 You can check committed packages of all chaincodes by the following comamand.
 
 ```
-python3 scripts/peer-ctrl.py check committed-package
+python3 scripts/peer-ctrl.py check committed-package <channel>
 ```
 
 The output example is below.

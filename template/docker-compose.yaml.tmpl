@@ -73,7 +73,8 @@ services:
         - $PWD/conf/organizations:/go/conf/organizations/
         - $PWD/scripts:/go/scripts/
         - $PWD/conf:/go/conf/
-        - $PWD/chaincode/src:/go/src/
+        - $PWD/chaincode:/go/src/
+        - $PWD/chaincode-sample/sample:/go/src/sample
         - $PWD/cache:/go/cache/
         - $PWD/channel-artifacts:/go/channel-artifacts/
     depends_on:

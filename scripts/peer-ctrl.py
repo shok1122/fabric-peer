@@ -13,7 +13,6 @@ with open('cache/config-network.yaml') as f:
     g_conf_net = yaml.safe_load(f)
 
 g_orderer_domain = g_conf_net['orderer']['domain']
-g_channel = g_conf_net['channel']
 
 FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
 
@@ -128,17 +127,17 @@ def queryinstalled():
             --output json"
     call(command)
 
-def querycommitted():
+def querycommitted(channel):
     print('------------------------------------')
     print(' querycommitted')
     print('------------------------------------')
     command = f" \
         peer lifecycle chaincode querycommitted \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --output json"
     call(command)
 
-def approve(chaincode_name, version, sequence, package_id):
+def approve(channel, chaincode_name, version, sequence, package_id):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -147,7 +146,7 @@ def approve(chaincode_name, version, sequence, package_id):
             --orderer orderer.{g_orderer_domain}:7050 \
             --tls \
             --cafile {g_path_orderer_ca} \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --name {chaincode_name} \
             --version {version} \
             --sequence {sequence} \
@@ -155,7 +154,7 @@ def approve(chaincode_name, version, sequence, package_id):
             --package-id {package_id}"
     call(command)
 
-def check_commit_readiness(chaincode_name, version, sequence):
+def check_commit_readiness(channel, chaincode_name, version, sequence):
     print('------------------------------------')
     print(' check commit readiness')
     print('------------------------------------')
@@ -164,14 +163,14 @@ def check_commit_readiness(chaincode_name, version, sequence):
             --orderer orderer.{g_orderer_domain}:7050 \
             --tls \
             --cafile {g_path_orderer_ca} \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --name {chaincode_name} \
             --version {version} \
             --sequence {sequence} \
             --init-required"
     call(command)
 
-def commit(chaincode_name, version, sequence):
+def commit(channel, chaincode_name, version, sequence):
     print( '------------------------------------')
     print(f' commit chaincode ({chaincode_name})')
     print( '------------------------------------')
@@ -190,7 +189,7 @@ def commit(chaincode_name, version, sequence):
             --orderer orderer.{g_orderer_domain}:7050 \
             --tls \
             --cafile {g_path_orderer_ca} \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --name {chaincode_name} \
             --version {version} \
             --sequence {sequence} \
@@ -213,7 +212,7 @@ def get_installed_package(package_id, peer_name, peer_domain):
             --tlsRootCertFiles {tls_root_cert_path}"
     call(command)
 
-def query(chaincode_name, chaincode_func, chaincode_args):
+def query(channel, chaincode_name, chaincode_func, chaincode_args):
 
     args = {}
     args["function"] = chaincode_func
@@ -226,12 +225,12 @@ def query(chaincode_name, chaincode_func, chaincode_args):
     print( '---------------------------------------------------')
     command = f"\
         peer chaincode query \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --name {chaincode_name} \
             --ctor '{args_text}'"
     call(command)
 
-def invoke(chaincode_name, chaincode_func, chaincode_args, init_flag):
+def invoke(channel, chaincode_name, chaincode_func, chaincode_args, init_flag):
 
     args = {}
     args["function"] = chaincode_func
@@ -259,7 +258,7 @@ def invoke(chaincode_name, chaincode_func, chaincode_args, init_flag):
     print( '---------------------------------------------------')
     command = f"\
         peer chaincode invoke \
-            --channelID {g_channel} \
+            --channelID {channel} \
             --tls \
             --orderer orderer.{g_orderer_domain}:7050 \
             --cafile {g_path_orderer_ca} \
@@ -270,8 +269,8 @@ def invoke(chaincode_name, chaincode_func, chaincode_args, init_flag):
             --ctor '{args_text}'"
     call(command)
 
-def init_ledger(chaincode_name):
-    invoke(chaincode_name, "InitLedger", [], True)
+def init_ledger(channel, chaincode_name):
+    invoke(channel, chaincode_name, "InitLedger", [], True)
 
 opt = sys.argv[1]
 
@@ -295,42 +294,49 @@ elif opt == 'cc':
         package_path = sys.argv[3]
         install(package_path)
     elif subopt == 'approve':
-        chaincode_name = sys.argv[3]
-        version = sys.argv[4]
-        sequence = sys.argv[5]
-        package_id = sys.argv[6]
-        approve(chaincode_name, version, sequence, package_id)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        version = sys.argv[5]
+        sequence = sys.argv[6]
+        package_id = sys.argv[7]
+        approve(channel, chaincode_name, version, sequence, package_id)
     elif subopt == 'commit':
-        chaincode_name = sys.argv[3]
-        version = sys.argv[4]
-        sequence = sys.argv[5]
-        commit(chaincode_name, version, sequence)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        version = sys.argv[5]
+        sequence = sys.argv[6]
+        commit(channel, chaincode_name, version, sequence)
     elif subopt == 'get-package':
         package_id = sys.argv[3]
         peer_name = sys.argv[4]
         peer_domain = sys.argv[5]
         get_installed_package(package_id, peer_name, peer_domain)
     elif subopt == 'query':
-        chaincode_name = sys.argv[3]
-        chaincode_func = sys.argv[4]
-        chaincode_args = sys.argv[5:]
-        query(chaincode_name, chaincode_func, chaincode_args)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        chaincode_func = sys.argv[5]
+        chaincode_args = sys.argv[6:]
+        query(channel, chaincode_name, chaincode_func, chaincode_args)
     elif subopt == 'invoke':
-        chaincode_name = sys.argv[3]
-        chaincode_func = sys.argv[4]
-        chaincode_args = sys.argv[5:]
-        invoke(chaincode_name, chaincode_func, chaincode_args, False)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        chaincode_func = sys.argv[5]
+        chaincode_args = sys.argv[6:]
+        invoke(channel, chaincode_name, chaincode_func, chaincode_args, False)
     elif subopt == 'init-ledger':
-        chaincode_name = sys.argv[3]
-        init_ledger(chaincode_name)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        init_ledger(channel, chaincode_name)
 elif opt == 'check':
     subopt = sys.argv[2]
     if subopt == 'commit-readiness':
-        chaincode_name = sys.argv[3]
-        version = sys.argv[4]
-        sequence = sys.argv[5]
-        check_commit_readiness(chaincode_name, version, sequence)
+        channel = sys.argv[3]
+        chaincode_name = sys.argv[4]
+        version = sys.argv[5]
+        sequence = sys.argv[6]
+        check_commit_readiness(channel, chaincode_name, version, sequence)
     elif subopt == 'installed-package':
         queryinstalled()
     elif subopt == 'committed-package':
-        querycommitted()
+        channel = sys.argv[3]
+        querycommitted(channel)

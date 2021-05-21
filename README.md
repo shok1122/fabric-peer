@@ -9,6 +9,11 @@ https://docs.conda.io/en/latest/miniconda.html#linux-installers
 https://docs.docker.com/engine/install/ubuntu/
 https://docs.docker.com/compose/install/
 
+## Go
+
+Go 1.15
+https://golang.org/doc/go1.15
+
 # Getting Start
 
 The following steps guide you through the installation and the building network.

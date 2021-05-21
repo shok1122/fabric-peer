@@ -137,7 +137,7 @@ def querycommitted(channel):
             --output json"
     call(command)
 
-def approve(channel, chaincode_name, version, sequence, package_id):
+def approve(channel, chaincode_name, version, sequence, package_id, init_required):
     print('------------------------------------')
     print(' approve for my org')
     print('------------------------------------')
@@ -150,11 +150,12 @@ def approve(channel, chaincode_name, version, sequence, package_id):
             --name {chaincode_name} \
             --version {version} \
             --sequence {sequence} \
-            --init-required \
             --package-id {package_id}"
+    if init_required == "true":
+        command = command + " --init-required"
     call(command)
 
-def check_commit_readiness(channel, chaincode_name, version, sequence):
+def check_commit_readiness(channel, chaincode_name, version, sequence, init_required):
     print('------------------------------------')
     print(' check commit readiness')
     print('------------------------------------')
@@ -166,11 +167,13 @@ def check_commit_readiness(channel, chaincode_name, version, sequence):
             --channelID {channel} \
             --name {chaincode_name} \
             --version {version} \
-            --sequence {sequence} \
-            --init-required"
+            --sequence {sequence}"
+
+    if init_required == "true":
+        command = command + " --init-required"
     call(command)
 
-def commit(channel, chaincode_name, version, sequence):
+def commit(channel, chaincode_name, version, sequence, init_required):
     print( '------------------------------------')
     print(f' commit chaincode ({chaincode_name})')
     print( '------------------------------------')
@@ -193,9 +196,10 @@ def commit(channel, chaincode_name, version, sequence):
             --name {chaincode_name} \
             --version {version} \
             --sequence {sequence} \
-            --init-required \
             {peer_addr_list} \
             {tls_root_cert_list}"
+    if init_required == "true":
+        command = command + "--init-required"
     call(command)
 
 def get_installed_package(package_id, peer_name, peer_domain):
@@ -299,13 +303,15 @@ elif opt == 'cc':
         version = sys.argv[5]
         sequence = sys.argv[6]
         package_id = sys.argv[7]
-        approve(channel, chaincode_name, version, sequence, package_id)
+        init_required = sys.argv[8]
+        approve(channel, chaincode_name, version, sequence, package_id, init_required)
     elif subopt == 'commit':
         channel = sys.argv[3]
         chaincode_name = sys.argv[4]
         version = sys.argv[5]
         sequence = sys.argv[6]
-        commit(channel, chaincode_name, version, sequence)
+        init_required = sys.argv[7]
+        commit(channel, chaincode_name, version, sequence, init_required)
     elif subopt == 'get-package':
         package_id = sys.argv[3]
         peer_name = sys.argv[4]
@@ -334,7 +340,8 @@ elif opt == 'check':
         chaincode_name = sys.argv[4]
         version = sys.argv[5]
         sequence = sys.argv[6]
-        check_commit_readiness(channel, chaincode_name, version, sequence)
+        init_required = sys.argv[7]
+        check_commit_readiness(channel, chaincode_name, version, sequence, init_required)
     elif subopt == 'installed-package':
         queryinstalled()
     elif subopt == 'committed-package':

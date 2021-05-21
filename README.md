@@ -131,16 +131,17 @@ python3 scripts/peer-ctrl.py check installed-package
 
 Now you can approve the package to be comitted.
 The chaincode has a version number and a sequence number.
+If the chaincode to be called Function InitLedger, you have to set `true` to <init-ledger flag>.
 
 ```
-python3 scripts/peer-ctrl.py cc approve <channel> <chaincode name> <version number> <sequence number> <package identifier>
+python3 scripts/peer-ctrl.py cc approve <channel> <chaincode name> <version number> <sequence number> <package identifier> <init-ledger flag>
 ```
 
 All three commands above need to be invoked on all necessary organizations.
 You can check which organization has approved the chaincode with the following command.
 
 ```
-python3 scripts/peer-ctrl.py check commit-readiness <channel> <chaincode name> <version name> <sequence number>
+python3 scripts/peer-ctrl.py check commit-readiness <channel> <chaincode name> <version name> <sequence number> <init-ledger flag>
 ```
 
 ## Commit the chaincode
@@ -148,7 +149,7 @@ python3 scripts/peer-ctrl.py check commit-readiness <channel> <chaincode name> <
 When all necessary organizations approve commit of the chaincode, you can commit the chaincode.
 
 ```
-python3 scripts/peer-ctrl.py cc commit <channel> <chaincode name> <version number> <sequence number>
+python3 scripts/peer-ctrl.py cc commit <channel> <chaincode name> <version number> <sequence number> <init-ledger flag>
 ```
 
 You can check committed packages of all chaincodes by the following comamand.

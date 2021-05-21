@@ -19,7 +19,7 @@ FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
 g_path_orderer_ca = f'{FABRIC_CFG_PATH}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
 
 def call(command):
-    #print(command)
+    print(command)
     subprocess.call(command, shell=True)
 
 def get_anchor_addr_list():
@@ -269,6 +269,7 @@ def invoke(channel, chaincode_name, chaincode_func, chaincode_args, init_flag):
             {opt_peerAddresses} \
             {opt_tlsRootCertFiles} \
             {opt_isInit} \
+            --waitForEvent \
             --name {chaincode_name} \
             --ctor '{args_text}'"
     call(command)

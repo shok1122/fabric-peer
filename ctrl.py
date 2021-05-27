@@ -31,11 +31,10 @@ def install():
     files = os.listdir('bin')
     files = [ f for f in files if not f.startswith('.') ]
     if not files:
-        subprocess.call('curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.3.0 1.4.9 -ds', shell=True)
+        subprocess.call('script/install-fabric.sh binary', shell=True)
 
     # install docker images
-    subprocess.call('curl -sSL https://bit.ly/2ysbOFE | bash -s -- 2.3.0 1.4.9 -bs', shell=True)
-    subprocess.call('docker build -t hyperledger/fabric-tools:custom -f docker/Dockerfile-cli .', shell=True)
+    subprocess.call('script/install-fabric.sh docker', shell=True)
 
 def load_config_peer():
     global g_conf_peer

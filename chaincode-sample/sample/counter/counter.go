@@ -4,6 +4,7 @@ import (
     "errors"
     "strconv"
     "fmt"
+    "os"
 
     "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
@@ -51,7 +52,7 @@ func (cc *CcCounter) InitLedger(ctx contractapi.TransactionContextInterface) err
 
 func (cc *CcCounter) Get(ctx contractapi.TransactionContextInterface, key string) (string, error) {
 
-    fmt.Printf("Get (key:%s)\n", key)
+    fmt.Fprintf(os.Stderr, "Get (key:%s)\n", key)
 
     iCount, err := getCount(ctx, key)
 
@@ -64,7 +65,7 @@ func (cc *CcCounter) Get(ctx contractapi.TransactionContextInterface, key string
 
 func (cc *CcCounter) Reset(ctx contractapi.TransactionContextInterface, key string) error {
 
-    fmt.Printf("Reset (key:%s)\n", key)
+    fmt.Fprintf(os.Stderr, "Reset (key:%s)\n", key)
 
     err := ctx.GetStub().PutState(key, []byte("0"))
 
@@ -77,7 +78,7 @@ func (cc *CcCounter) Reset(ctx contractapi.TransactionContextInterface, key stri
 
 func (cc *CcCounter) Countup(ctx contractapi.TransactionContextInterface, key string) (string, error) {
 
-    fmt.Printf("Countup (key:%s)\n", key)
+    fmt.Fprintf(os.Stderr, "Countup (key:%s)\n", key)
 
     iCount, err := getCount(ctx, key)
 

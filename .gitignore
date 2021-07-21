@@ -1,6 +1,6 @@
 bin/*
 cache/*
-chaincode/*
+!chaincode/sample
 channel-artifacts/*
 conf/*
 config/*

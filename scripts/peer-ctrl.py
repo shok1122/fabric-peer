@@ -23,7 +23,7 @@ def call(command):
     start = time.time()
     subprocess.call(command, shell=True)
     elapsed_time = time.time() - start
-    print(elapsed_time)
+    return elapsed_time
 
 def get_anchor_addr_list():
     addr_list = []
@@ -227,15 +227,13 @@ def query(channel, chaincode_name, chaincode_func, chaincode_args):
 
     args_text = json.dumps(args)
 
-    print( '---------------------------------------------------')
-    print(f' query: {chaincode_func}')
-    print( '---------------------------------------------------')
     command = f"\
         peer chaincode query \
             --channelID {channel} \
             --name {chaincode_name} \
             --ctor '{args_text}'"
-    call(command)
+    elapsed_time = call(command)
+    print(f'query (func:{chaincode_func}, time:{elapsed_time}, args:{chaincode_args})')
 
 def invoke(channel, chaincode_name, chaincode_func, chaincode_args, init_flag):
 
@@ -260,9 +258,6 @@ def invoke(channel, chaincode_name, chaincode_func, chaincode_args, init_flag):
     if init_flag:
         opt_isInit = "--isInit"
 
-    print( '---------------------------------------------------')
-    print(f' invoke: {chaincode_func}')
-    print( '---------------------------------------------------')
     command = f"\
         peer chaincode invoke \
             --channelID {channel} \
@@ -275,7 +270,8 @@ def invoke(channel, chaincode_name, chaincode_func, chaincode_args, init_flag):
             --waitForEvent \
             --name {chaincode_name} \
             --ctor '{args_text}'"
-    call(command)
+    elapsed_time = call(command)
+    print(f'invoke (func:{chaincode_func}, time:{elapsed_time}, args:{chaincode_args})')
 
 def init_ledger(channel, chaincode_name):
     invoke(channel, chaincode_name, "InitLedger", [], True)

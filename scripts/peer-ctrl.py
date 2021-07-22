@@ -3,6 +3,7 @@ import subprocess
 import sys
 import yaml
 import json
+import time
 
 g_conf_peer = None
 with open('cache/config-peer.yaml') as f:
@@ -19,8 +20,10 @@ FABRIC_CFG_PATH = os.environ['FABRIC_CFG_PATH']
 g_path_orderer_ca = f'{FABRIC_CFG_PATH}/organizations/ordererOrganizations/{g_orderer_domain}/orderers/orderer.{g_orderer_domain}/msp/tlscacerts/tlsca.{g_orderer_domain}-cert.pem'
 
 def call(command):
-    print(command)
+    start = time.time()
     subprocess.call(command, shell=True)
+    elapsed_time = time.time() - start
+    print(elapsed_time)
 
 def get_anchor_addr_list():
     addr_list = []
